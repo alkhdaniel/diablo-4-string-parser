@@ -1,2 +1,2 @@
-# diablo-4-string-parser
-Included an example file, the file that gets parsed is currently hardcoded into the python file and it just dumps the parsed json object to console for now.
+# Diablo StringList Parser
+Drop a directory containing .stl files onto the .py file and it will parse them and output a file called StringList.json
