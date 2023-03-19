@@ -47,6 +47,6 @@ for filename in os.listdir(indir):
             thisTextmap[keyValuePair[0]] = keyValuePair[1]              #insert current pair into the textmap
         textmap[filename] = thisTextmap
         print(filename+" Parsed")
-json_object = json.dumps(textmap, indent = 4).replace(r'\u0000', '')    #convert all the data to json object (and remove trash \u0000 from it)
+json_object = json.dumps(textmap, indent = 4, ensure_ascii=False).replace(r'\u0000', '')    #convert all the data to json object (and remove trash \u0000 from it)
 with open('StringList.json', 'w') as f:
     f.write(json_object)
