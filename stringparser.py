@@ -1,12 +1,11 @@
 import json
 
 def readHeader(f):                                      #48 bytes
-    bundle = f.read(8)                                  #not sure but some file type identifier
+    game = f.read(4)                                    #some kind of game identifier
+    filetype = f.read(4)                                #some kind of file type identifier
     f.read(4)                                           #padding bytes
-    f.read(4)                                           #some type of file id identifier
-    f.read(1)                                           #no clue
-    fileid = f.read(2)                                  #this ID links to cousin files in meta/ folder
-    f.read(1)                                           #padding
+    f.read(4)                                           #???
+    hashid = f.read(4)                                  #hashId, links to cousin files in meta/ folder
     f.read(12)                                          #padding bytes
     f.read(4)                                           #dont know, seems to always be 32, some kind of block size or something?
     infoLength = int.from_bytes(f.read(4), "little")    #infoblock byte length, divide by 40 to get total keyvalue pairs
