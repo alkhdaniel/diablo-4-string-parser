@@ -3,7 +3,10 @@ import json
 def readHeader(f):                                      #48 bytes
     bundle = f.read(8)                                  #not sure but some file type identifier
     f.read(4)                                           #padding bytes
-    f.read(8)                                           #dont know, always different, maybe file id identifier
+    f.read(4)                                           #some type of file id identifier
+    f.read(1)                                           #no clue
+    fileid = f.read(2)                                  #this ID links to cousin files in meta/ folder
+    f.read(1)                                           #padding
     f.read(12)                                          #padding bytes
     f.read(4)                                           #dont know, seems to always be 32, some kind of block size or something?
     infoLength = int.from_bytes(f.read(4), "little")    #infoblock byte length, divide by 40 to get total keyvalue pairs
@@ -22,9 +25,9 @@ def readInfoBlock(f):                               #40 bytes
 
 def readKeyValue(f, keyLen, valLen):
     key=f.read(keyLen-1)                                #read the key name
-    f.read(8-(f.tell()%8))                              #padding bytes
+    f.read((8-(f.tell()%8))%8)                          #padding bytes (pads until the next 8th position)
     val=f.read(valLen-1)                                #read the value
-    f.read(8-(f.tell()%8))                              #padding bytes
+    f.read((8-(f.tell()%8))%8)                          #padding bytes (pads until the next 8th position)
     return [key.decode("utf8"), val.decode("utf8")]
     
 
