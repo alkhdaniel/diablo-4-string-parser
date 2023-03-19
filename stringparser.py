@@ -11,34 +11,33 @@ def readHeader(f):                                      #48 bytes
     infoLength = int.from_bytes(f.read(4), "little")    #infoblock byte length, divide by 40 to get total keyvalue pairs
     f.read(8)                                           #padding bytes
     return infoLength
+
+
+def readOffset(f, offset, length):
+    curOffset = f.tell()
+    f.seek(offset)
+    thisString = f.read(length)
+    f.seek(curOffset)
+    return thisString.decode("utf-8")
     
 def readInfoBlock(f):                               #40 bytes
     f.read(8)                                       #padding bytes
-    unknown1 = f.read(4)                            #dont know
+    keyOffset = int.from_bytes(f.read(4), "little") #key name file offset
     keyLen = int.from_bytes(f.read(4), "little")    #key name length
+    keyString = readOffset(f, keyOffset+16, keyLen) #grab the key string
     f.read(8)                                       #padding bytes
-    unknown2 = f.read(4)                            #dont know
+    valOffset = int.from_bytes(f.read(4), "little") #value string file offset
     valLen = int.from_bytes(f.read(4), "little")    #value string length
+    valString = readOffset(f, valOffset+16, valLen) #grab the value string
     f.read(8)                                       #padding bytes
-    return [keyLen, valLen]
+    return [keyString, valString]
 
-def readKeyValue(f, keyLen, valLen):
-    key=f.read(keyLen-1)                                #read the key name
-    f.read((8-(f.tell()%8))%8)                          #padding bytes (pads until the next 8th position)
-    val=f.read(valLen-1)                                #read the value
-    f.read((8-(f.tell()%8))%8)                          #padding bytes (pads until the next 8th position)
-    return [key.decode("utf8"), val.decode("utf8")]
-    
-
-with open('enUS_Text/meta/StringList/Power_Sorcerer_Hydra.stl', 'rb+') as f:
+with open('enUS_Text/meta/StringList/AchievementsUI.stl', 'rb+') as f:
     infoLength = readHeader(f)                                      #for now readHeader only returns the length of infoblocks
     keyValuePairs = int(infoLength/40)                              #how many keyvalue pairs the file contains
-    keyValueLens = []                                               #we store the keyvalue lengths here
-    for i in range (0, keyValuePairs):
-        keyValueLens.append(readInfoBlock(f))                       #get key and value length info for all pairs and store it
     textmap = {}                                                    #we store the final parsed file in here
-    for i in range (0, keyValuePairs):                              #loop all keyvalue pairs
-        keyvalue = readKeyValue(f, keyValueLens[i][0], keyValueLens[i][1])  #grab the keyvalue pair text
-        textmap[keyvalue[0]] = keyvalue[1]                                  #insert current pair into the textmap
+    for i in range (0, keyValuePairs):
+        keyValuePair = readInfoBlock(f)                             #grab the keyvalue pair text
+        textmap[keyValuePair[0]] = keyValuePair[1]                  #insert current pair into the textmap
     json_object = json.dumps(textmap, indent = 4)                   #convert all the data to json object
     print(json_object)                                              #print it out to console for now
