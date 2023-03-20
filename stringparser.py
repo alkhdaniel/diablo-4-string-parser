@@ -48,5 +48,5 @@ for filename in os.listdir(indir):
         textmap[filename] = thisTextmap
         print(filename+" Parsed")
 json_object = json.dumps(textmap, indent = 4, ensure_ascii=False).replace(r'\u0000', '')    #convert all the data to json object (and remove trash \u0000 from it)
-with open('StringList.json', 'w') as f:
+with open('StringList.json', 'w', encoding="utf8") as f:
     f.write(json_object)
