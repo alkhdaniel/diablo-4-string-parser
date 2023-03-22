@@ -34,20 +34,17 @@ def readHeader(f):                                                      #
 def readInfoBlock(f):                                                   #44 bytes
     startOffset = f.tell()
     #dont ask about this
+    f.read(20)
     if (startOffset%8 == 0):
-        f.read(24)
-    elif (startOffset%8 == 4):
-        f.read(20)
+        f.read(4)
 
     keyOffset = readInt(f, 4)                                           #key name file offset
     keyLen = readInt(f, 4)                                              #key name length
     keyString = readOffset(f, keyOffset+16, keyLen).decode("utf-8")     #grab the key string
 
     #dont ask about this
-    if (startOffset%8 == 0):
-        f.read(12)
-    elif (startOffset%8 == 4):
-        f.read(16)
+    if (startOffset%8 == 4):
+        f.read(4)
     return keyString
 
 indir = sys.argv[1]
