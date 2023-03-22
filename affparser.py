@@ -1,4 +1,4 @@
-#drop folder with .pow files on top, there may still be some bugs in this im not sure
+#drop folder with .aff files on top, there may still be some bugs in this im not sure
 import json
 import sys
 import os
@@ -60,11 +60,8 @@ for filename in os.listdir(indir):
         f.seek(infoBlocks[0])                                           #info blocks start at the offset we got earlier
         for i in range (0, keyValuePairs):
             thisTextmap.append(readInfoBlock(f))
-            print(thisTextmap)
-            input()
-        input()
         textmap[filename] = thisTextmap
         print(filename+" Parsed")
 json_object = json.dumps(textmap, indent = 4, ensure_ascii=False).replace(r'\u0000', '')    #convert all the data to json object (and remove trash \u0000 from it)
-with open('PowList.json', 'w', encoding="utf8") as f:
+with open('AffList.json', 'w', encoding="utf8") as f:
     f.write(json_object)
