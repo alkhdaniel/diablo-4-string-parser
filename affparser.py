@@ -34,9 +34,9 @@ def readHeader(f):                                                      #
 def readInfoBlock(f):                                                   #44 bytes
     startOffset = f.tell()
     #dont ask about this
-    if (startOffset%16 == 0 or startOffset%16 == 8):
+    if (startOffset%8 == 0):
         f.read(24)
-    elif (startOffset%16 == 4 or startOffset%16 == 12):
+    elif (startOffset%8 == 4):
         f.read(20)
 
     keyOffset = readInt(f, 4)                                           #key name file offset
@@ -44,9 +44,9 @@ def readInfoBlock(f):                                                   #44 byte
     keyString = readOffset(f, keyOffset+16, keyLen).decode("utf-8")     #grab the key string
 
     #dont ask about this
-    if (startOffset%16 == 0):
+    if (startOffset%8 == 0):
         f.read(12)
-    elif (startOffset%16 == 4 or startOffset%16 == 12):
+    elif (startOffset%8 == 4):
         f.read(16)
     return keyString
 
@@ -60,6 +60,7 @@ for filename in os.listdir(indir):
         f.seek(infoBlocks[0])                                           #info blocks start at the offset we got earlier
         for i in range (0, keyValuePairs):
             thisTextmap.append(readInfoBlock(f))
+            print(thisTextmap)
         textmap[filename] = thisTextmap
         print(filename+" Parsed")
 json_object = json.dumps(textmap, indent = 4, ensure_ascii=False).replace(r'\u0000', '')    #convert all the data to json object (and remove trash \u0000 from it)
